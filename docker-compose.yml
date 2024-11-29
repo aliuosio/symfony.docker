@@ -45,6 +45,12 @@ services:
     container_name: ${NAMESPACE}_db
     image: postgres:${PG_VERSION}
     env_file: .env
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+
 
   redis_session:
     container_name: ${NAMESPACE}_redis_session
@@ -121,8 +127,8 @@ services:
 #    command: --interval 3600
 
 volumes:
-  # db_data:
   # rabbitmq_data:
+  db_data:
   opensearch_data:
   redis_socket_cache:
   redis_socket_session:
