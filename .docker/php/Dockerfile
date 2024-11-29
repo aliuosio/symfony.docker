@@ -1,4 +1,6 @@
-FROM php:8.1.29-fpm-alpine3.19
+ARG PHP_VERSION_SET
+FROM php:${PHP_VERSION_SET}
+
 LABEL maintainer="Osiozekhai Aliu"
 
 ARG USER_PHP
@@ -7,9 +9,8 @@ ARG ACPU_VERSION
 ARG XDEBUG_VERSION
 ARG FIXUID_VERSION
 
-COPY ./.docker/php/cwebp-120-linux-x86-64 /usr/local/bin/cwebp
 RUN apk add bash
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | -E bash
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
 RUN apk update && apk upgrade \
     && apk add --update linux-headers \
     && apk add --virtual build-dependencies libc-dev libxslt-dev freetype-dev libjpeg-turbo-dev libpng-dev libzip-dev libwebp-dev curl \
