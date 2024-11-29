@@ -23,7 +23,9 @@ services:
     env_file: .env
     sysctls:
       net.core.somaxconn: 65536
-#    depends_on:
+    depends_on:
+      db:
+        condition: service_healthy
 #      redis_session:
 #        condition: service_healthy
 #      redis_cache:
@@ -47,6 +49,11 @@ services:
     env_file: .env
     environment:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
     volumes:
       - db_data:/var/lib/postgresql/data
 
