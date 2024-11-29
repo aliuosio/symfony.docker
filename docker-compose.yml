@@ -6,7 +6,7 @@ services:
     depends_on:
       - php
     ports:
-      - "8080:8080"
+      - "80:80"
     command: '/usr/sbin/nginx -g "daemon off; error_log /dev/stderr info;"'
     networks:
       default:
@@ -23,11 +23,11 @@ services:
     env_file: .env
     sysctls:
       net.core.somaxconn: 65536
-    depends_on:
-      redis_session:
-        condition: service_healthy
-      redis_cache:
-        condition: service_healthy
+#    depends_on:
+#      redis_session:
+#        condition: service_healthy
+#      redis_cache:
+#        condition: service_healthy
     user: ${UID_GID}
     restart: on-failure
     entrypoint: [ "fixuid","docker-php-entrypoint" ]
@@ -50,60 +50,58 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-
-
-  redis_session:
-    container_name: ${NAMESPACE}_redis_session
-    image: redis:${REDIS_VERSION}
-    sysctls:
-      net.core.somaxconn: '1024'
-    entrypoint: redis-server
-    command: [ "/etc/redis/redis.conf", "--appendonly", "yes" ]
-    healthcheck:
-      test: 'redis-cli ping || exit 1'
-      interval: 30s
-      timeout: 30s
-      retries: 3
-    volumes:
-      - redis_socket_session:/run/redis/
-      - ./.docker/redis/redis.conf:/etc/redis/redis.conf:ro
-
-  redis_cache:
-    container_name: ${NAMESPACE}_redis_cache
-    image: redis:${REDIS_VERSION}
-    sysctls:
-      net.core.somaxconn: '1024'
-    entrypoint: redis-server
-    command: [ "/etc/redis/redis.conf", "--appendonly", "yes" ]
-    healthcheck:
-      test: 'redis-cli ping || exit 1'
-      interval: 30s
-      timeout: 30s
-      retries: 3
-    volumes:
-      - redis_socket_cache:/run/redis/
-      - ./.docker/redis/redis.conf:/etc/redis/redis.conf:ro
-
-  opensearch:
-    container_name: ${NAMESPACE}_opensearch
-    image: markoshust/magento-opensearch:${OPENSEARCH_VERSION}
-    env_file: .env
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      - "discovery.type=single-node"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "index.blocks.read_only_allow_delete"
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
-
-  mailhog:
-    container_name: ${NAMESPACE}_mailhog
-    image: mailhog/mailhog:${MAILHOG_VERSION}
-    ports:
-      - ${MAILHOG_EXTERNAL_PORT}:8025
-      - "1025:1025"
+#  redis_session:
+#    container_name: ${NAMESPACE}_redis_session
+#    image: redis:${REDIS_VERSION}
+#    sysctls:
+#      net.core.somaxconn: '1024'
+#    entrypoint: redis-server
+#    command: [ "/etc/redis/redis.conf", "--appendonly", "yes" ]
+#    healthcheck:
+#      test: 'redis-cli ping || exit 1'
+#      interval: 30s
+#      timeout: 30s
+#      retries: 3
+#    volumes:
+#      - redis_socket_session:/run/redis/
+#      - ./.docker/redis/redis.conf:/etc/redis/redis.conf:ro
+#
+#  redis_cache:
+#    container_name: ${NAMESPACE}_redis_cache
+#    image: redis:${REDIS_VERSION}
+#    sysctls:
+#      net.core.somaxconn: '1024'
+#    entrypoint: redis-server
+#    command: [ "/etc/redis/redis.conf", "--appendonly", "yes" ]
+#    healthcheck:
+#      test: 'redis-cli ping || exit 1'
+#      interval: 30s
+#      timeout: 30s
+#      retries: 3
+#    volumes:
+#      - redis_socket_cache:/run/redis/
+#      - ./.docker/redis/redis.conf:/etc/redis/redis.conf:ro
+#
+#  opensearch:
+#    container_name: ${NAMESPACE}_opensearch
+#    image: markoshust/magento-opensearch:${OPENSEARCH_VERSION}
+#    env_file: .env
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    environment:
+#      - "discovery.type=single-node"
+#      - "cluster.routing.allocation.disk.threshold_enabled=false"
+#      - "index.blocks.read_only_allow_delete"
+#    volumes:
+#      - opensearch_data:/usr/share/opensearch/data
+#
+#  mailhog:
+#    container_name: ${NAMESPACE}_mailhog
+#    image: mailhog/mailhog:${MAILHOG_VERSION}
+#    ports:
+#      - ${MAILHOG_EXTERNAL_PORT}:8025
+#      - "1025:1025"
 
 #  rabbitmq:
 #    container_name: ${NAMESPACE}_rabbitmq
@@ -128,10 +126,10 @@ services:
 
 volumes:
   # rabbitmq_data:
+  # opensearch_data:
+  # redis_socket_cache:
+  # redis_socket_session:
   db_data:
-  opensearch_data:
-  redis_socket_cache:
-  redis_socket_session:
   app_data:
     driver_opts:
       type: none
