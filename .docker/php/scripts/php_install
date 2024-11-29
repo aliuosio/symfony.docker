@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+. php_functions.sh
+
+magentoSetup
+MagentoTwoFactorAuthDisable
+sampleDataInstallMustInstall
+setMagentoPermissions
