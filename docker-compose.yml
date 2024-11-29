@@ -24,8 +24,6 @@ services:
     sysctls:
       net.core.somaxconn: 65536
     depends_on:
-      db:
-        condition: service_healthy
       redis_session:
         condition: service_healthy
       redis_cache:
