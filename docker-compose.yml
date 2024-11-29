@@ -35,7 +35,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - db_socket:/var/run/mysqld
       - app_data:${WORKDIR_SERVER}:delegated
       - composer_cache:/home/www-data/.composer:delegated
       - .docker/php/config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
@@ -46,11 +45,6 @@ services:
     container_name: ${NAMESPACE}_db
     image: postgres:${PG_VERSION}
     env_file: .env
-    volumes:
-      - db_socket:/var/run/mysqld
-      - db_data:/var/lib/mysql/
-      - .docker/mysql/db_dumps:/docker-entrypoint-initdb.d
-      - .docker/mysql/config/my.cnf:/etc/mysql/my.cnf:ro
 
   redis_session:
     container_name: ${NAMESPACE}_redis_session
@@ -127,12 +121,11 @@ services:
 #    command: --interval 3600
 
 volumes:
+  # db_data:
   # rabbitmq_data:
   opensearch_data:
   redis_socket_cache:
   redis_socket_session:
-  db_socket:
-  db_data:
   app_data:
     driver_opts:
       type: none
